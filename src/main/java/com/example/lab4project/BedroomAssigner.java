@@ -3,6 +3,8 @@
 package com.example.lab4project;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -17,11 +19,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
+import javafx.util.converter.IntegerStringConverter;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 import java.time.LocalDateTime;
+import java.util.function.UnaryOperator;
 
 
 public class BedroomAssigner extends Application {
@@ -64,29 +70,30 @@ public class BedroomAssigner extends Application {
         Group group = new Group();
 
         //Canvas of the UI
-        Canvas canvas = new Canvas(400, 24);
+        Canvas canvas = new Canvas(400, 300);
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 
 
         //Drawing a rectangle on the canvas
         graphicsContext.setFill(Color.BEIGE);
-        graphicsContext.fillRect(0, 0, canvas.getWidth(), 24);
+        graphicsContext.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
 
 
 
         //Creating pane of vbox
-        VBox vBox = new VBox(25);
+        VBox vBox = new VBox(10);
 
         //Creating pane of Hbox
         HBox hBox = new HBox(25);
 
 
         //title pane information
-        Label programInformation = new Label("This program gives you a room to stay in given a stay duration of your choice.");
+        Label programInformation = new Label("This program gives you a room to stay in given a stay duration of your choice." +
+                "\nIf the Program doesn't run you have enter in something wrong");
         Label nameFieldTip = new Label("Enter your name in the textbox below.");
-        Label dayFieldTip = new Label("Enter the day you wish to start your below");
-        Label monthFieldTip = new Label("Enter the month you wish to start your below");
+        Label dayFieldTip = new Label("Enter the day you wish to start your below (Number between 1-31, changes based on month)");
+        Label monthFieldTip = new Label("Enter the month you wish to start your below(Number between 1-12)");
 
 
 
@@ -94,15 +101,18 @@ public class BedroomAssigner extends Application {
         TextField userNameField = new TextField();
         userNameField.setPromptText("Enter your Name Here");
 
-        TextField userDayField = new TextField();
+        NumericTextField userDayField = new NumericTextField();
         userDayField.setPromptText("Enter Day Here");
 
-        TextField userMonthField = new TextField();
+        NumericTextField userMonthField = new NumericTextField();
         userMonthField.setPromptText("Enter Month Here");
 
-        //Converting user day and month fields to integers
-        int userMonth = Integer.parseInt(userMonthField.getText());
-        int userDay = Integer.parseInt(userDayField.getText());
+
+
+
+
+
+
 
 
         //Button submit info
@@ -118,8 +128,8 @@ public class BedroomAssigner extends Application {
             graphicsContext.setFont(new Font("Times New Romans", TextSize));
             graphicsContext.setFill(Color.BLACK);
             graphicsContext.fillText(StudentsName + " You have been assigned to room num: " + randomNum(0,100) +
-                    "\nYour stay starts: " + LocalDateTime.now() +
-                    "\n And ends on: " + dateTime(userMonth, userDay)
+                    "\nYour stay starts: " + LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES) + " Military Time" +
+                    "\n And ends on: " + dateTime(userMonthField.getIntValue(), userDayField.getIntValue()) + " Military Time"
                     , 0, TextSize);
         });
 
@@ -128,6 +138,8 @@ public class BedroomAssigner extends Application {
         buttonTwo.setOnAction(event -> {
             //Clearing the Name Field
             userNameField.clear();
+            userMonthField.clear();
+            userDayField.clear();
             //Clearing the Canvas
             graphicsContext.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
             graphicsContext.setFill(Color.BEIGE);
@@ -160,8 +172,8 @@ public class BedroomAssigner extends Application {
 
         //Adding objects to the BorderPane
         borderPane.setTop(vBox);
-        borderPane.setBottom(hBox);
-        borderPane.setCenter(canvas);
+        borderPane.setBottom(canvas);
+        borderPane.setCenter(hBox);
 
 
         //Adding objects to the group
