@@ -9,6 +9,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -17,7 +18,10 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Random;
+import java.time.LocalDateTime;
 
 
 public class BedroomAssigner extends Application {
@@ -34,6 +38,14 @@ public class BedroomAssigner extends Application {
 
         Random random = new Random();
         return random.nextInt(min, max);
+    }
+
+
+    public LocalDateTime dateTime (int month, int day) {
+        LocalDate currentDate = LocalDate.of(2026, month, day);
+        LocalTime endTime = LocalTime.of(6,0);
+
+        return LocalDateTime.of(currentDate, endTime);
     }
 
     @Override
@@ -71,20 +83,29 @@ public class BedroomAssigner extends Application {
 
 
         //title pane information
-        Label ProgramInformation = new Label("Type your Name in the text field below." +
-                "\nThen press the submit button to get your room number and at what time your room will be available." +
-                "\nPress the clear button to get a new room based on name." +
-                "\nPress the Close Application to quit.");
+        Label programInformation = new Label("This program gives you a room to stay in given a stay duration of your choice.");
+        Label nameFieldTip = new Label("Enter your name in the textbox below.");
+        Label dayFieldTip = new Label("Enter the day you wish to start your below");
+        Label monthFieldTip = new Label("Enter the month you wish to start your below");
 
 
 
         //Text field pane information
         TextField userNameField = new TextField();
-        userNameField.setPromptText("Enter your Name here");
+        userNameField.setPromptText("Enter your Name Here");
 
-        //Button pane information
+        TextField userDayField = new TextField();
+        userDayField.setPromptText("Enter Day Here");
 
-        //Button Sumbit info
+        TextField userMonthField = new TextField();
+        userMonthField.setPromptText("Enter Month Here");
+
+        //Converting user day and month fields to integers
+        int userMonth = Integer.parseInt(userMonthField.getText());
+        int userDay = Integer.parseInt(userDayField.getText());
+
+
+        //Button submit info
         Button buttonOne = new Button("Submit");
         buttonOne.setOnAction(event -> {
             //Clearing the Canvas
@@ -96,7 +117,10 @@ public class BedroomAssigner extends Application {
             String StudentsName = userNameField.getText();
             graphicsContext.setFont(new Font("Times New Romans", TextSize));
             graphicsContext.setFill(Color.BLACK);
-            graphicsContext.fillText(StudentsName + " You have been assigned to room num: " + randomNum(0,100), 0, TextSize);
+            graphicsContext.fillText(StudentsName + " You have been assigned to room num: " + randomNum(0,100) +
+                    "\nYour stay starts: " + LocalDateTime.now() +
+                    "\n And ends on: " + dateTime(userMonth, userDay)
+                    , 0, TextSize);
         });
 
         //Clear button info
@@ -125,8 +149,13 @@ public class BedroomAssigner extends Application {
 
 
         //adding objects to vbox
-        vBox.getChildren().add(ProgramInformation);
+        vBox.getChildren().add(programInformation);
+        vBox.getChildren().add(nameFieldTip);
         vBox.getChildren().add(userNameField);
+        vBox.getChildren().add(dayFieldTip);
+        vBox.getChildren().add(userDayField);
+        vBox.getChildren().add(monthFieldTip);
+        vBox.getChildren().add(userMonthField);
 
 
         //Adding objects to the BorderPane
