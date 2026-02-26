@@ -46,7 +46,12 @@ public class BedroomAssigner extends Application {
         return random.nextInt(min, max);
     }
 
-
+    /**
+     * Gives the stay duration time
+     * @param month Month you wish to stay until
+     * @param day Day you wish to stay until
+     * @return Gives the time for 2026
+     */
     public LocalDateTime dateTime (int month, int day) {
         LocalDate currentDate = LocalDate.of(2026, month, day);
         LocalTime endTime = LocalTime.of(6,0);
@@ -90,7 +95,8 @@ public class BedroomAssigner extends Application {
 
         //title pane information
         Label programInformation = new Label("This program gives you a room to stay in given a stay duration of your choice." +
-                "\nIf the Program doesn't run you have enter in something wrong");
+                "\nIf the Program doesn't run you have enter in something wrong" +
+                "\nProgram can only go up to the end of 2026");
         Label nameFieldTip = new Label("Enter your name in the textbox below.");
         Label dayFieldTip = new Label("Enter the day you wish to start your below (Number between 1-31, changes based on month)");
         Label monthFieldTip = new Label("Enter the month you wish to start your below(Number between 1-12)");
